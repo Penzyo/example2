@@ -50,3 +50,55 @@ security_namespace = SecurityNamespace(
 
 # aggiungere l'AccessControlEntry al SecurityNamespace
 security_client.set_access_control_entries(entries=[ace], security_namespace_id=security_namespace.id)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+from azure.devops.credentials import BasicAuthentication
+from azure.devops.security.v6_0.models import AccessControlEntry, AccessControlList
+from azure.devops.security.v6_0.security_client import SecurityClient
+
+# Credenziali di autenticazione di base per l'API di DevOps
+personal_access_token = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+organization_url = 'https://dev.azure.com/organization'
+
+credentials = BasicAuthentication('', personal_access_token)
+
+# Creazione del client per l'API di sicurezza di DevOps
+security_client = SecurityClient(base_url=organization_url, credentials=credentials)
+
+# Recupero della access control list esistente
+acl = security_client.get_access_control_list(
+    namespace_id='xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
+    token='repoV2/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'
+)
+
+# Creazione della nuova entry di controllo accesso
+new_ace = AccessControlEntry(
+    descriptor={'identifier': 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'},
+    allow_bits=7,
+    deny_bits=0,
+    extended_info=None
+)
+
+# Aggiunta della nuova entry alla access control list
+acl.access_control_entries.append(new_ace)
+
+# Aggiornamento della access control list sul server
+updated_acl = security_client.set_access_control_list(
+    namespace_id='xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
+    token='repoV2/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
+    security_namespace_id='xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
+    security_token_id='xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
+    access_control_list=acl
+)
