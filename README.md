@@ -80,3 +80,33 @@ for row in ws.iter_rows(values_only=True):
 
 # Stampa il dizionario JSON
 print(json.dumps(json_data, indent=4))
+
+
+
+import json
+import openpyxl
+
+# apri il file Excel
+workbook = openpyxl.load_workbook(filename='esempio.xlsx')
+worksheet = workbook.active
+
+# genera il dizionario
+json_data = {}
+for row in worksheet.iter_rows(values_only=True):
+    # salta le righe vuote
+    if not any(row):
+        continue
+    # inizializza il puntatore del dizionario
+    current_dict = json_data
+    # aggiungi il valore alla struttura del dizionario
+    for i, value in enumerate(row):
+        if not value:
+            break
+        if i not in current_dict:
+            current_dict[i] = {}
+        current_dict = current_dict[i]
+    current_dict['valore'] = {}
+
+# converti il dizionario in JSON e stampalo
+json_string = json.dumps(json_data, indent=4)
+print(json_string)
