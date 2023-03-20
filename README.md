@@ -37,3 +37,46 @@ json_str = json.dumps(json_dict)
 
 # Stampa la stringa JSON
 print(json_str)
+
+
+
+
+
+import openpyxl
+import json
+
+# Carica il file Excel
+wb = openpyxl.load_workbook('esempio.xlsx')
+
+# Seleziona il foglio di lavoro
+ws = wb.active
+
+# Inizializza il dizionario JSON
+json_data = {}
+
+# Itera sulle righe della tabella
+for row in ws.iter_rows(values_only=True):
+    # Inizializza il puntatore del dizionario JSON
+    current_json_level = json_data
+
+    # Itera sulle colonne della riga
+    for col_idx, cell_value in enumerate(row):
+        # Se la cella è vuota, salta la colonna
+        if cell_value is None:
+            continue
+
+        # Crea la chiave del dizionario JSON in base alla colonna
+        key = chr(ord('a') + col_idx)
+
+        # Aggiungi il valore alla posizione corretta nel dizionario JSON
+        if cell_value not in current_json_level:
+            current_json_level[cell_value] = {}
+
+        # Sposta il puntatore al livello corretto del dizionario JSON
+        current_json_level = current_json_level[cell_value]
+
+    # Resetta il puntatore del dizionario JSON per la prossima riga
+    current_json_level = json_data
+
+# Stampa il dizionario JSON
+print(json.dumps(json_data, indent=4))
